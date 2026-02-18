@@ -1,6 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { Instagram, MessageCircle, Mail } from 'lucide-react';
-import { getWhatsAppLink } from '@/data/products';
+import { useWhatsApp } from '@/context/SettingsContext';
 
 const footerLinks = [
     { href: '/', label: 'Home' },
@@ -10,6 +12,7 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+    const { getWhatsAppLink } = useWhatsApp();
     return (
         <footer
             style={{

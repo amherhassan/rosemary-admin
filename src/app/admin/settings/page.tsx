@@ -22,6 +22,9 @@ export default function SettingsPage() {
     const [philosophyImage, setPhilosophyImage] = useState('');
     const [uploadingImage, setUploadingImage] = useState(false);
 
+    // About Page Settings
+    const [aboutImage, setAboutImage] = useState('');
+
     // Account Settings
     const [newEmail, setNewEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -52,6 +55,7 @@ export default function SettingsPage() {
                 if (data.show_prices_global !== undefined) setShowPricesGlobal(data.show_prices_global);
                 if (data.brand_tagline) setBrandTagline(data.brand_tagline);
                 if (data.philosophy_image) setPhilosophyImage(data.philosophy_image);
+                if (data.about_image) setAboutImage(data.about_image);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
@@ -97,7 +101,7 @@ export default function SettingsPage() {
         }
     };
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, settingKey: 'philosophy' | 'about') => {
         const file = e.target.files?.[0];
         if (!file) return;
         setUploadingImage(true);
@@ -105,11 +109,14 @@ export default function SettingsPage() {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('folder', 'homepage');
+            formData.append('folder', settingKey); // generic folder or specifics
             const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
             if (!res.ok) throw new Error('Upload failed');
             const data = await res.json();
-            setPhilosophyImage(data.url);
+
+            if (settingKey === 'philosophy') setPhilosophyImage(data.url);
+            if (settingKey === 'about') setAboutImage(data.url);
+
         } catch (err) {
             setError('Failed to upload image');
         } finally {
@@ -131,6 +138,29 @@ export default function SettingsPage() {
             });
             if (!res.ok) throw new Error('Failed to save');
             setSuccess('Homepage settings saved!');
+        } catch (err) {
+            setError('Failed to save settings');
+        } finally {
+            setSaving(false);
+            setTimeout(() => setSuccess(''), 3000);
+        }
+    };
+
+    const handleSaveAbout = async () => {
+        setSaving(true);
+        setSuccess('');
+        setError('');
+        try {
+            console.log('Saving about settings:', { about_image: aboutImage });
+            const res = await fetch('/api/admin/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    about_image: aboutImage,
+                }),
+            });
+            if (!res.ok) throw new Error('Failed to save');
+            setSuccess('About page settings saved!');
         } catch (err) {
             setError('Failed to save settings');
         } finally {
@@ -217,6 +247,7 @@ export default function SettingsPage() {
             <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid #E5E7EB', paddingBottom: '1px' }}>
                 <TabButton active={activeTab === 'general'} onClick={() => setActiveTab('general')} label="General" icon={<Settings size={16} />} />
                 <TabButton active={activeTab === 'homepage'} onClick={() => setActiveTab('homepage')} label="Homepage" icon={<Image size={16} />} />
+                <TabButton active={activeTab === 'about'} onClick={() => setActiveTab('about')} label="About Page" icon={<Image size={16} />} />
                 <TabButton active={activeTab === 'account'} onClick={() => setActiveTab('account')} label="My Account" icon={<User size={16} />} />
                 <TabButton active={activeTab === 'team'} onClick={() => setActiveTab('team')} label="Team" icon={<Users size={16} />} />
             </div>
@@ -310,7 +341,7 @@ export default function SettingsPage() {
                                         <input
                                             type="file"
                                             accept="image/jpeg,image/png,image/webp"
-                                            onChange={handleImageUpload}
+                                            onChange={(e) => handleImageUpload(e, 'philosophy')}
                                             style={{ display: 'none' }}
                                             disabled={uploadingImage}
                                         />
@@ -333,6 +364,74 @@ export default function SettingsPage() {
                         <button onClick={handleSaveHomepage} disabled={saving} style={primaryBtnStyle}>
                             {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                             {saving ? 'Saving...' : 'Save Homepage Settings'}
+                        </button>
+                    </>
+                )}
+
+                {activeTab === 'about' && (
+                    <>
+                        <div style={cardStyle}>
+                            <h3 style={sectionTitle}>About Page Image</h3>
+                            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px', fontWeight: 200 }}>
+                                Upload the main image for the &quot;Where it all began&quot; section.
+                            </p>
+                            <div>
+                                <label style={labelStyle}>Image</label>
+                                {aboutImage ? (
+                                    <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid #E8E4DE' }}>
+                                        <img
+                                            src={aboutImage}
+                                            alt="About"
+                                            style={{ width: '100%', height: '220px', objectFit: 'cover', display: 'block' }}
+                                        />
+                                        <button
+                                            onClick={() => setAboutImage('')}
+                                            style={{
+                                                position: 'absolute', top: '8px', right: '8px',
+                                                width: '28px', height: '28px', borderRadius: '50%',
+                                                background: 'rgba(0,0,0,0.6)', color: 'white',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                border: 'none', cursor: 'pointer',
+                                            }}
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <label
+                                        style={{
+                                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                            gap: '12px', padding: '40px', border: '2px dashed #E2D8CC', borderRadius: '12px',
+                                            cursor: 'pointer', transition: 'all 0.2s',
+                                            background: uploadingImage ? '#F9F7F4' : 'transparent',
+                                        }}
+                                    >
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            onChange={(e) => handleImageUpload(e, 'about')}
+                                            style={{ display: 'none' }}
+                                            disabled={uploadingImage}
+                                        />
+                                        {uploadingImage ? (
+                                            <Loader2 size={24} className="animate-spin" style={{ color: 'var(--accent)' }} />
+                                        ) : (
+                                            <Upload size={24} style={{ color: 'var(--text-muted)' }} />
+                                        )}
+                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 300 }}>
+                                            {uploadingImage ? 'Uploading...' : 'Click to upload an image'}
+                                        </span>
+                                        <span style={{ fontSize: '0.7rem', color: 'var(--text-light)' }}>
+                                            JPEG, PNG or WebP — max 5MB
+                                        </span>
+                                    </label>
+                                )}
+                            </div>
+                        </div>
+
+                        <button onClick={handleSaveAbout} disabled={saving} style={primaryBtnStyle}>
+                            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                            {saving ? 'Saving...' : 'Save About Settings'}
                         </button>
                     </>
                 )}

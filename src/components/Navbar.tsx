@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, MessageCircle } from 'lucide-react';
-import { getWhatsAppLink } from '@/data/products';
+import { useWhatsApp } from '@/context/SettingsContext';
 
 const navLinks = [
     { href: '/', label: 'Home' },
@@ -13,6 +13,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+    const { getWhatsAppLink } = useWhatsApp();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -56,7 +57,7 @@ export default function Navbar() {
                     href="/"
                     style={{
                         fontFamily: 'var(--font-heading)',
-                        fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
+                        fontSize: 'clamp(2rem, 3.5vw, 3rem)',
                         fontWeight: 400,
                         letterSpacing: '0.05em',
                         color: '#620C7B',

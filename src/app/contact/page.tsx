@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { MessageCircle, Mail, Instagram, MapPin } from 'lucide-react';
-import { getWhatsAppLink } from '@/data/products';
+import { useWhatsApp } from '@/context/SettingsContext';
 
 const fadeUp = {
     initial: { opacity: 0, y: 30 },
@@ -51,6 +51,7 @@ const contactMethods = [
 ];
 
 export default function ContactPage() {
+    const { getWhatsAppLink } = useWhatsApp();
     return (
         <>
             {/* Header */}

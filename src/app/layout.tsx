@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   },
 };
 
+import { createClient } from '@/lib/supabase-server';
+import { SettingsProvider } from '@/context/SettingsContext';
+
+// ... (Metadata export remains same, but I need to handle imports carefully )
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -25,6 +30,16 @@ export default async function RootLayout({
   const pathname = headersList.get('x-pathname') || '';
   const isAdmin = pathname.startsWith('/admin');
 
+  // Fetch Site Settings
+  const supabase = await createClient();
+  const { data: settingsData } = await supabase.from('site_settings').select('*');
+  const settings: Record<string, any> = {};
+  if (settingsData) {
+    settingsData.forEach((row: any) => {
+      settings[row.key] = row.value;
+    });
+  }
+
   return (
     <html lang="en">
       <head>
@@ -33,16 +48,18 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@100..700&display=swap" rel="stylesheet" />
       </head>
       <body>
-        {!isAdmin && <Navbar />}
-        {isAdmin ? (
-          children
-        ) : (
-          <main style={{ paddingTop: 'var(--nav-height)' }}>
-            {children}
-          </main>
-        )}
-        {!isAdmin && <Footer />}
-        {!isAdmin && <WhatsAppButton />}
+        <SettingsProvider settings={settings}>
+          {!isAdmin && <Navbar />}
+          {isAdmin ? (
+            children
+          ) : (
+            <main style={{ paddingTop: 'var(--nav-height)' }}>
+              {children}
+            </main>
+          )}
+          {!isAdmin && <Footer />}
+          {!isAdmin && <WhatsAppButton />}
+        </SettingsProvider>
       </body>
     </html>
   );
