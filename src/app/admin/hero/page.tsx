@@ -11,6 +11,7 @@ interface HeroSection {
     cta_text: string;
     cta_link: string;
     bg_image_url: string | null;
+    mobile_bg_image_url: string | null;
     is_active: boolean;
     sort_order: number;
 }
@@ -25,7 +26,7 @@ export default function HeroPage() {
     const fileRef = useRef<HTMLInputElement>(null);
 
     const [form, setForm] = useState({
-        title: '', subtitle: '', description: '', cta_text: '', cta_link: '', bg_image_url: '', is_active: true, sort_order: 0,
+        title: '', subtitle: '', description: '', cta_text: '', cta_link: '', bg_image_url: '', mobile_bg_image_url: '', is_active: true, sort_order: 0,
     });
 
     const fetchData = async () => {
@@ -37,7 +38,7 @@ export default function HeroPage() {
 
     useEffect(() => { fetchData(); }, []);
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'bg_image_url' | 'mobile_bg_image_url' = 'bg_image_url') => {
         const file = e.target.files?.[0];
         if (!file) return;
         setUploading(true);
@@ -46,7 +47,7 @@ export default function HeroPage() {
         formData.append('folder', 'hero');
         const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
         const data = await res.json();
-        if (data.url) setForm(prev => ({ ...prev, bg_image_url: data.url }));
+        if (data.url) setForm(prev => ({ ...prev, [field]: data.url }));
         setUploading(false);
     };
 
@@ -84,14 +85,14 @@ export default function HeroPage() {
         setEditing(item);
         setForm({
             title: item.title, subtitle: item.subtitle || '', description: item.description || '',
-            cta_text: item.cta_text || '', cta_link: item.cta_link || '', bg_image_url: item.bg_image_url || '',
+            cta_text: item.cta_text || '', cta_link: item.cta_link || '', bg_image_url: item.bg_image_url || '', mobile_bg_image_url: item.mobile_bg_image_url || '',
             is_active: item.is_active, sort_order: item.sort_order,
         });
         setShowForm(true);
     };
 
     const resetForm = () => {
-        setForm({ title: '', subtitle: '', description: '', cta_text: '', cta_link: '', bg_image_url: '', is_active: true, sort_order: 0 });
+        setForm({ title: '', subtitle: '', description: '', cta_text: '', cta_link: '', bg_image_url: '', mobile_bg_image_url: '', is_active: true, sort_order: 0 });
         setEditing(null);
         setShowForm(false);
     };
@@ -141,14 +142,26 @@ export default function HeroPage() {
                             <input value={form.cta_link} onChange={(e) => setForm(p => ({ ...p, cta_link: e.target.value }))} style={inputStyle} placeholder="/shop" />
                         </div>
                     </div>
-                    <div style={{ marginBottom: '12px' }}>
-                        <label style={labelStyle}>Background Image</label>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            {form.bg_image_url && <img src={form.bg_image_url} alt="" style={{ width: '120px', height: '60px', objectFit: 'cover', borderRadius: '6px' }} />}
-                            <button onClick={() => fileRef.current?.click()} disabled={uploading} style={{ ...inputStyle, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', width: 'auto' }}>
-                                <Upload size={14} /> {uploading ? 'Uploading...' : 'Upload Image'}
-                            </button>
-                            <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
+                    <div style={{ marginBottom: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div>
+                            <label style={labelStyle}>Desktop Image</label>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                {form.bg_image_url && <img src={form.bg_image_url} alt="" style={{ width: '80px', height: '45px', objectFit: 'cover', borderRadius: '6px' }} />}
+                                <button onClick={() => document.getElementById('desktop-upload')?.click()} disabled={uploading} style={{ ...inputStyle, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', width: 'auto' }}>
+                                    <Upload size={14} /> Upload
+                                </button>
+                                <input id="desktop-upload" type="file" accept="image/*" onChange={(e) => handleUpload(e, 'bg_image_url')} style={{ display: 'none' }} />
+                            </div>
+                        </div>
+                        <div>
+                            <label style={labelStyle}>Mobile Image</label>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                {form.mobile_bg_image_url && <img src={form.mobile_bg_image_url} alt="" style={{ width: '45px', height: '80px', objectFit: 'cover', borderRadius: '6px' }} />}
+                                <button onClick={() => document.getElementById('mobile-upload')?.click()} disabled={uploading} style={{ ...inputStyle, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', width: 'auto' }}>
+                                    <Upload size={14} /> Upload
+                                </button>
+                                <input id="mobile-upload" type="file" accept="image/*" onChange={(e) => handleUpload(e, 'mobile_bg_image_url')} style={{ display: 'none' }} />
+                            </div>
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>

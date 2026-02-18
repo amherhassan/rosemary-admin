@@ -63,18 +63,19 @@ export default function HomeClient({ featuredProducts, newArrivals, categories, 
                 {/* Background image from admin */}
                 {heroBgImage && (
                     <>
-                        <img
-                            src={heroBgImage}
-                            alt=""
-                            style={{
-                                position: 'absolute',
-                                inset: 0,
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                                objectPosition: 'center top',
-                            }}
-                        />
+                        <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+                            {hero.mobile_bg_image_url && <source media="(max-width: 768px)" srcSet={hero.mobile_bg_image_url} />}
+                            <img
+                                src={heroBgImage}
+                                alt=""
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    objectPosition: 'center top',
+                                }}
+                            />
+                        </picture>
                         {/* Overlay for text readability */}
                         <div
                             style={{

@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
             cta_text: body.cta_text || '',
             cta_link: body.cta_link || '',
             bg_image_url: body.bg_image_url || null,
+            mobile_bg_image_url: body.mobile_bg_image_url || null,
             is_active: body.is_active !== false,
             sort_order: body.sort_order || 0,
         }])
@@ -58,6 +59,7 @@ export async function PUT(request: NextRequest) {
             cta_text: body.cta_text,
             cta_link: body.cta_link,
             bg_image_url: body.bg_image_url,
+            mobile_bg_image_url: body.mobile_bg_image_url,
             is_active: body.is_active,
             sort_order: body.sort_order,
         })
