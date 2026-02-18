@@ -1,0 +1,22 @@
+import AdminSidebar from '@/components/admin/AdminSidebar';
+import './admin.css';
+
+export const metadata = {
+    title: 'Admin — Rosemary',
+    robots: 'noindex, nofollow',
+};
+
+export default function AdminLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="admin-layout">
+            <AdminSidebar />
+            <main className="admin-main-content">
+                {children}
+            </main>
+        </div>
+    );
+}
