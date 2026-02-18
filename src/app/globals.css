@@ -1,22 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #FAF8F5;
-  --bg-dark: #1A1A1A;
+  --bg: #F8F4EF;
+  --bg-warm: #F0E8DE;
+  --bg-dark: #1A1816;
   --bg-card: #FFFFFF;
-  --text: #2C2C2C;
-  --text-muted: #8A8680;
-  --text-light: #B5B0A8;
+  --text: #2A2520;
+  --text-muted: #8C7E72;
+  --text-light: #B8AA9C;
   --accent: #620C7B;
   --accent-hover: #7A1E93;
   --accent-soft: #620C7B1A;
-  --border: #E8E4DE;
-  --border-light: #F0EDE8;
-  --overlay: rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.1);
+  --tan: #C4A882;
+  --tan-light: #D9C9B2;
+  --tan-dark: #A88E6E;
+  --border: #E2D8CC;
+  --border-light: #EDE6DC;
+  --overlay: rgba(42, 37, 32, 0.45);
+  --shadow-sm: 0 1px 3px rgba(42, 37, 32, 0.05);
+  --shadow-md: 0 4px 16px rgba(42, 37, 32, 0.07);
+  --shadow-lg: 0 12px 40px rgba(42, 37, 32, 0.09);
+  --shadow-xl: 0 24px 60px rgba(42, 37, 32, 0.12);
   --font-heading: 'Cormorant Garamond', 'Georgia', serif;
   --font-body: 'Outfit', 'Helvetica Neue', sans-serif;
   --nav-height: 80px;
@@ -78,7 +82,7 @@ img {
 }
 
 ::selection {
-  background-color: var(--accent);
+  background-color: var(--tan);
   color: white;
 }
 

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Upload, X, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import VariantManager from './VariantManager';
 
 interface ProductFormProps {
     productId?: string;
@@ -273,27 +274,16 @@ export default function ProductForm({ productId }: ProductFormProps) {
                             </select>
                         </div>
 
-                        {/* Sizes + Colors */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                            <div style={fieldGroup}>
-                                <label style={labelStyle}>Sizes (comma separated)</label>
-                                <input
-                                    value={form.sizes}
-                                    onChange={(e) => setForm(prev => ({ ...prev, sizes: e.target.value }))}
-                                    style={inputStyle}
-                                    placeholder="XS, S, M, L, XL"
-                                />
+                        {/* Sizes + Colors / Variants */}
+                        {productId ? (
+                            <VariantManager productId={productId} />
+                        ) : (
+                            <div style={{ padding: '20px', background: '#F9FAFB', borderRadius: '8px', border: '1px dashed #D1D5DB', textAlign: 'center' }}>
+                                <p style={{ fontSize: '0.85rem', color: '#6B7280' }}>
+                                    Save the product first to add detailed size/color variants with stock tracking.
+                                </p>
                             </div>
-                            <div style={fieldGroup}>
-                                <label style={labelStyle}>Colors (comma separated)</label>
-                                <input
-                                    value={form.colors}
-                                    onChange={(e) => setForm(prev => ({ ...prev, colors: e.target.value }))}
-                                    style={inputStyle}
-                                    placeholder="Champagne, Ivory"
-                                />
-                            </div>
-                        </div>
+                        )}
 
                         {/* Images */}
                         <div style={fieldGroup}>
